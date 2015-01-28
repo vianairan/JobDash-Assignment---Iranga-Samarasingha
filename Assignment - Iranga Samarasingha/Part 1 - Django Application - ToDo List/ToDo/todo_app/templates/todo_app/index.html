@@ -1,0 +1,61 @@
+<!--
+   Date: Jan 27th, 2015 
+   @author: Iranga Samarasingha  
+   Purpose: Main page of the todo_app application
+-->
+   
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'todo_app/style.css' %}" />
+{% if todo_list %}
+<head>
+   <title>TODO LIST</title>
+</head>
+<!--<img src="../static/todo_app/images/todo.jpg" align="middle" >-->
+
+<!-- This form is used to add a new ToDo item to the database-->
+<form method="post" action="">
+   {% csrf_token %}
+   <fieldset>
+      <legend style="font-weight: bold;">ADD TASK</legend>
+      <label>Task : </label><input type="text" class="text" name="todo[]" value="" required = "required"><br>   <!-- Title -->
+      <label>Assigned To : </label><input type="text" class="text"  name="todo[]" value="" required = "required"> <br> <!-- Assigned To -->
+      <label>Due Date : </label><input type="date" class="text"  name="todo[]" required = "required"><br> <!-- Due Date -->
+      <label>Description : </label>  <!-- Description -->
+      <textarea id="txtArea" rows="5" name="todo[]"></textarea>
+      <br>      
+      <input type="hidden" name="todo" name="todo[]"/>
+      <input type="submit" value ="Add" /><label class="status">{{msg}}</label>  <!-- Displaying the status -->
+   </fieldset>
+</form>
+
+<h1>To Do Items</h1>  <!-- Header 1 -->
+
+<body>
+   {% for task in todo_list %}  <!-- Iterate through the existing ToDo list -->
+
+   <form method="post" action="">  <!-- Each ToDo item is displayed on a form -->
+      {% csrf_token %}
+      <fieldset>
+         {% if task.completed %}  <!-- Check if task is completed -->
+             <input type="checkbox" id="cb_1" name="completed" checked="true"  onchange="this.form.submit();">
+             <label for="cb_1" margin="0">DONE !</label>
+         {% else %}
+             <input type="checkbox" id="cb_2"  name="completed"  onchange="this.form.submit();">
+             <label for="cb_2" margin="0">Pending..</label>
+         {% endif %}
+             <input type="hidden" name ="status" value={{task.id}} />  <!-- Submit the id of the ToDo item upon change of complete status -->
+             <hr>
+             <label>Task : </label><input type="text" class="text" value="{{ task }}" readonly><br>    <!-- Populate the fields of the each ToDo item on the page -->
+             <label>Assigned By : </label><input type="text" class="text"  value="{{ task.assignedby }}" readonly><br>
+             <label>Assigned To : </label><input type="text" class="text"  value="{{ task.assignedto }}" readonly><br>
+             <label>Due Date : </label><input type="text" class="text"  value="{{ task.due_date }}" readonly><br>
+             <label>Description : </label>
+             <textarea id="txtArea" rows="5" readonly>{{ task.description }}</textarea><br>       
+      </fieldset>
+   </form>
+
+   {% endfor %}
+</body>
+{% else %}
+<p>No tasks are available.</p>
+{% endif %}
